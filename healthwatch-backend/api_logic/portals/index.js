@@ -8,17 +8,18 @@ import { withCors } from "../../src/middleware/cors.js";
 
 async function handler(req, res) {
   if (req.method === "GET") {
-    const portals = await prisma.statePortal.findMany({
-      where: {
-        minister: {
-          isActive: true
-        }
-      },
-      select: { state: true, isUnlocked: true },
+    // Instead of filtering portals by minister (which has issues in production), 
+    // we fetch active ministers and their state portals.
+    const activeMinisters = await prisma.healthMinister.findMany({
+      where: { isActive: true },
+      include: { statePortal: true },
     });
+    
     // Return as map { state: boolean }
     const map = {};
-    portals.forEach(p => (map[p.state] = p.isUnlocked));
+    activeMinisters.forEach(m => {
+      map[m.state] = m.statePortal ? m.statePortal.isUnlocked : false;
+    });
     return res.json(map);
   }
 
