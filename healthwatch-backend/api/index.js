@@ -20,6 +20,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => res.json({ 
+  status: 'Backend is Live', 
+  message: 'HealthWatch API is running.',
+  version: 'direct_sql_v1'
+}));
+
 // Routes mapping
 const routes = [
   { path: '/api/admin/ministers/:id', handler: adminMinistersId },
