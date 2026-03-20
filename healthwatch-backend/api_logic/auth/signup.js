@@ -1,8 +1,9 @@
 // api/auth/signup.js  — POST /api/auth/signup
 
-import { prisma } from "../../src/lib/prisma.js";
+import pool from "../../src/lib/mysql.js";
 import { signToken } from "../../src/middleware/auth.js";
 import { withCors } from "../../src/middleware/cors.js";
+import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 
 async function handler(req, res) {
@@ -22,43 +23,51 @@ async function handler(req, res) {
 
   try {
     // Check portal is unlocked for this state
-    const portal = await prisma.statePortal.findUnique({ where: { state } });
-    if (!portal || !portal.isUnlocked)
+    const [portalRows] = await pool.execute(`SELECT isUnlocked FROM StatePortal WHERE state = ? LIMIT 1`, [state]);
+    if (portalRows.length === 0 || !portalRows[0].isUnlocked)
       return res.status(403).json({ error: "Portal is not active for this state" });
 
     // Check email unique
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return res.status(409).json({ error: "Email already registered" });
+    const [existing] = await pool.execute(`SELECT id FROM User WHERE email = ? LIMIT 1`, [email]);
+    if (existing.length > 0) return res.status(409).json({ error: "Email already registered" });
 
-    const hashed = await bcrypt.hash(password, 12);
-    console.log("[Signup] Payload:", JSON.stringify(req.body, null, 2));
-    const user = await prisma.user.create({
-      data: {
-        name, email, phone, password: hashed, role, state, district, area,
-        hospital: hospitalId ? { connect: { id: hospitalId } } : undefined,
-        dob: dob && !isNaN(new Date(dob)) ? new Date(dob) : null,
-        gender,
-        bloodGroup,
-        familyMale: familyMale ? +familyMale : 0,
-        familyFemale: familyFemale ? +familyFemale : 0,
-        regularCondition,
-        photo,
-        profileComplete: true,
-      },
-    });
+    const hashedPassword = await bcrypt.hash(password, 12);
+    console.log("[Signup] Payload received for:", email, "Role:", role);
 
-    const token = signToken({ id: user.id, role: user.role, state: user.state, hospitalId: user.hospitalId });
+    const newId = randomUUID();
+    const now = new Date();
+    const dobDate = dob && !isNaN(new Date(dob)) ? new Date(dob) : null;
+
+    let columns = ["id", "name", "email", "password", "role", "state", "district", "profileComplete", "isActive", "createdAt", "updatedAt"];
+    let values = [newId, name, email, hashedPassword, role, state, district, 1, 1, now, now];
+
+    if (phone) { columns.push("phone"); values.push(phone); }
+    if (area) { columns.push("area"); values.push(area); }
+    if (hospitalId) { columns.push("hospitalId"); values.push(hospitalId); }
+    if (dobDate) { columns.push("dob"); values.push(dobDate); }
+    if (gender) { columns.push("gender"); values.push(gender); }
+    if (bloodGroup) { columns.push("bloodGroup"); values.push(bloodGroup); }
+    if (familyMale) { columns.push("familyMale"); values.push(+familyMale); }
+    if (familyFemale) { columns.push("familyFemale"); values.push(+familyFemale); }
+    if (regularCondition) { columns.push("regularCondition"); values.push(regularCondition); }
+    if (photo) { columns.push("photo"); values.push(photo); }
+
+    const placeholders = values.map(() => "?").join(", ");
+    await pool.execute(`INSERT INTO User (${columns.join(", ")}) VALUES (${placeholders})`, values);
+
+    const token = signToken({ id: newId, role, state, hospitalId });
     return res.status(201).json({
       token,
       user: {
-        id: user.id, name: user.name, email: user.email, role: user.role,
-        state: user.state, district: user.district, area: user.area,
-        profileComplete: true, photo: user.photo,
-        dob: user.dob, familyMale: user.familyMale, familyFemale: user.familyFemale,
-        regularCondition: user.regularCondition, hospitalId: user.hospitalId
+        id: newId, name, email, role,
+        state, district, area,
+        profileComplete: true, photo,
+        dob: dobDate, familyMale, familyFemale,
+        regularCondition, hospitalId
       },
     });
   } catch (err) {
+    if (err.code === "ER_DUP_ENTRY") return res.status(409).json({ error: "Email already registered" });
     console.error("[Signup] Server Error:", err);
     return res.status(500).json({ error: "Server error" });
   }
