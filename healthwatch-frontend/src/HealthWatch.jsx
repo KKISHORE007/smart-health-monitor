@@ -585,13 +585,24 @@ function checkOutbreakAlert(allSymptoms, hospitalId, district) {
   return null;
 }
 
-// Get all symptom entries for a given hospital+district+disease combination
-function getPatientEntriesForAlert(allSymptoms, hospitalId, district, disease) {
-  return allSymptoms.filter(s =>
-    s.hospitalId === hospitalId &&
-    s.district?.trim().toLowerCase() === district?.trim().toLowerCase() &&
-    s.detectedDisease === disease
-  );
+// Get precise symptom entries for a given alert using its backend-provided entries
+function getPatientEntriesForAlert(alertEntries, allSymptoms) {
+  return (alertEntries || [])
+    .map(e => {
+      const local = allSymptoms.find(s => s.id === e.symptomReportId);
+      if (local) return local;
+      const r = e.symptomReport;
+      if (!r) return null;
+      return {
+        id: r.id, patientId: r.patientId, 
+        patientName: r.patient?.name || "Unknown Patient",
+        hospitalId: r.hospitalId, district: r.district, area: r.area, state: r.state,
+        selectedSymptoms: r.symptoms || [], date: r.submittedAt,
+        detectedDisease: r.detectedDisease, alertSent: r.alertSent,
+        isResolved: r.isResolved, patient: r.patient
+      };
+    })
+    .filter(Boolean);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2576,8 +2587,8 @@ function DoctorDashboard({ user, hospitals, users, symptoms, alerts, onLogout, o
                 <p style={{color:"#64748b",marginTop:4}}>All areas within safe thresholds</p>
               </Card>
             ) : allAlerts.map(a => {
-              // Always fetch live patient entries from symptoms for this alert
-              const liveEntries = getPatientEntriesForAlert(symptoms, a.hospitalId, a.area, a.disease);
+              // Use precise entries tied to this alert from backend
+              const liveEntries = getPatientEntriesForAlert(a.entries, symptoms);
               return (
                 <div key={a.id} style={{
                   background:"#0d0505",border:"1px solid rgba(239,68,68,0.35)",
@@ -3093,7 +3104,7 @@ function HealthMinisterDashboard({ minister, appState, onAddHospital, onRemoveHo
                   <p style={{color:"#64748b",marginTop:4}}>All districts within safe thresholds</p>
                 </Card>
               ) : stateAlerts.map(a => {
-                const liveEntries = getPatientEntriesForAlert(stateSymptoms, a.hospitalId, a.district, a.disease);
+                const liveEntries = getPatientEntriesForAlert(a.entries, stateSymptoms);
                 return (
                   <div key={a.id} style={{background:"#0d0505",border:"1px solid rgba(239,68,68,0.35)",borderLeft:"4px solid #ef4444",borderRadius:16,marginBottom:20,overflow:"hidden"}}>
                     <div style={{background:"#450a0a",padding:"16px 22px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:12}}>
@@ -3208,9 +3219,16 @@ function HealthMinisterDashboard({ minister, appState, onAddHospital, onRemoveHo
                           <div style={{fontSize:10,fontWeight:700,color:"#166534",textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Resolved Patient Records:</div>
                           <div style={{display:"flex",flexDirection:"column",gap:6}}>
                             {(a.entries || []).map((ent, i) => (
-                              <div key={i} style={{background:"#ffffff",border:"1px solid #d1fae5",borderRadius:8,padding:"8px 12px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                                <div style={{fontSize:13,fontWeight:700,color:"#065f46"}}>{ent.symptomReport?.patient?.name || "Anonymous Patient"}</div>
-                                <div style={{fontSize:11,color:"#059669"}}>📍 {ent.symptomReport?.area || "General Area"} · {ent.symptomReport?.district}</div>
+                              <div key={i} style={{background:"#ffffff",border:"1px solid #d1fae5",borderRadius:8,padding:"8px 12px",display:"flex",flexDirection:"column",gap:6}}>
+                                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                                  <div style={{fontSize:13,fontWeight:700,color:"#065f46"}}>{ent.symptomReport?.patient?.name || "Anonymous Patient"}</div>
+                                  <div style={{fontSize:11,color:"#059669"}}>📍 {ent.symptomReport?.area || "General Area"} · {ent.symptomReport?.district}</div>
+                                </div>
+                                <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                                  {(ent.symptomReport?.symptoms || []).map(sym => (
+                                    <span key={sym} style={{background:"#d1fae5",color:"#065f46",padding:"2px 8px",borderRadius:999,fontSize:10,fontWeight:600}}>{sym}</span>
+                                  ))}
+                                </div>
                               </div>
                             ))}
                           </div>
