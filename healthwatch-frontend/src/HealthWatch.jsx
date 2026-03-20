@@ -996,13 +996,13 @@ function LandingPage({ statePortals, onHMAdmin, onSuperAdmin, onLogin, onSignup 
           <div style={{fontSize:12,color:"#38bdf8",fontFamily:"'JetBrains Mono',monospace",letterSpacing:3,marginBottom:16}}>
             GOVERNMENT OF INDIA · HEALTH MINISTRY
           </div>
-          <h1 style={{fontSize:"clamp(32px,5vw,68px)",fontWeight:800,letterSpacing:-2,lineHeight:1.05,marginBottom:16,maxWidth:900,textShadow:"0 4px 20px rgba(15,23,42,0.4)"}}>
+          <h1 style={{fontSize:"clamp(32px,5vw,68px)",fontWeight:800,letterSpacing:-2,lineHeight:1.05,marginBottom:16,maxWidth:900,margin:"0 auto",textShadow:"0 4px 20px rgba(15,23,42,0.4)",textAlign:"center"}}>
             <span style={{color:"#ffffff"}}>Smart Community Health</span><br/>
             <span style={{background:"linear-gradient(135deg,#38bdf8,#3b82f6,#1d4ed8)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",filter:"drop-shadow(0 2px 8px rgba(59,130,246,0.5))"}}>
               Early Warning System
             </span>
           </h1>
-          <p style={{color:"rgba(226,232,240,0.9)",fontSize:16,maxWidth:600,lineHeight:1.7,marginBottom:32,textShadow:"0 2px 8px rgba(0,0,0,0.6))", textAlign:"center"}}>
+          <p style={{color:"rgba(226,232,240,0.9)",fontSize:16,maxWidth:600,margin:"0 auto 32px",lineHeight:1.7,textShadow:"0 2px 8px rgba(0,0,0,0.6))", textAlign:"center"}}>
             Protecting communities across India from waterborne disease outbreaks through real-time surveillance, district-level monitoring, and rapid alert systems.
           </p>
 
