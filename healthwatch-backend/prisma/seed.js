@@ -92,7 +92,25 @@ async function main() {
     console.log(`  ✅ ${m.state.padEnd(40)} ${m.id}  /  ${m.pass}`);
   }
 
-  console.log(`\n✅ Seed complete! ${MINISTERS.length} ministers + 1 Super Admin seeded.`);
+  // ── Test Patient ────────────────────────────────────────────────────────────
+  const hashedPatient = await bcrypt.hash("patient123", 12);
+  await prisma.user.upsert({
+    where: { email: "test@patient.com" },
+    create: {
+      name: "Test Patient",
+      email: "test@patient.com",
+      password: hashedPatient,
+      role: "PATIENT",
+      state: "Tamil Nadu",
+      district: "Chennai",
+      isActive: true,
+      profileComplete: true,
+    },
+    update: { password: hashedPatient, role: "PATIENT" },
+  });
+  console.log("\n✅ Test Patient created (test@patient.com / patient123)");
+
+  console.log(`\n✅ Seed complete! ${MINISTERS.length} ministers + 1 Super Admin + 1 Test Patient seeded.`);
   console.log("\nLogin credentials:");
   console.log("  Super Admin : SA-INDIA-2024       / india@healthwatch");
   console.log("  HM Example  : HM-TN-001           / tn@health2024");

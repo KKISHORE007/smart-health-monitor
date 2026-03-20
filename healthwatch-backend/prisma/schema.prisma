@@ -82,7 +82,7 @@ model User {
   email           String   @unique
   phone           String?
   password        String                  // bcrypt hashed
-  role            UserRole
+  role            Role
   state           String
   district        String
   area            String?
@@ -108,10 +108,12 @@ model User {
   resolvedCases   ResolvedCase[]
 }
 
-enum UserRole {
-  patient
-  doctor
-  helper
+enum Role {
+  SUPERADMIN
+  MINISTER
+  DOCTOR
+  PATIENT
+  HELPER
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
