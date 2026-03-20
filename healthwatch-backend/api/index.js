@@ -7,6 +7,7 @@ import adminMinistersIndex from '../api_logic/admin/ministers/index.js';
 import alertsIndex from '../api_logic/alerts/index.js';
 import authLogin from '../api_logic/auth/login.js';
 import authSignup from '../api_logic/auth/signup.js';
+import debug from '../api_logic/debug.js';
 import casesResolve from '../api_logic/cases/resolve.js';
 import hospitalsId from '../api_logic/hospitals/[id].js';
 import hospitalsIndex from '../api_logic/hospitals/index.js';
@@ -27,6 +28,7 @@ const routes = [
   { path: '/api/alerts',              handler: alertsIndex },
   { path: '/api/auth/login',           handler: authLogin },
   { path: '/api/auth/signup',          handler: authSignup },
+  { path: '/api/debug',                handler: debug },
   { path: '/api/cases/resolve',        handler: casesResolve },
   { path: '/api/hospitals/:id',        handler: hospitalsId },
   { path: '/api/hospitals',            handler: hospitalsIndex },
