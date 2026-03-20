@@ -25,7 +25,7 @@ async function handler(req, res) {
     // ── Health Minister ───────────────────────────────────────
     const trimmedId = id ? id.trim() : "";
     if (role === "minister") {
-      const minister = await prisma.healthMinister.findUnique({ where: { id: trimmedId } });
+      const minister = await prisma.healthMinister.findFirst({ where: { id: trimmedId } });
       if (!minister || !minister.isActive || !(await bcrypt.compare(password, minister.password))) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
@@ -35,12 +35,12 @@ async function handler(req, res) {
 
     // ── Patient / Doctor / Helper ─────────────────────────────
     if (!email) return res.status(400).json({ error: "Email required" });
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { email } });
     if (!user || !user.isActive || !(await bcrypt.compare(password, user.password)))
       return res.status(401).json({ error: "Invalid credentials" });
 
     // Check if portal is active for user's state
-    const portal = await prisma.statePortal.findUnique({ where: { state: user.state } });
+    const portal = await prisma.statePortal.findFirst({ where: { state: user.state } });
     if (!portal || !portal.isUnlocked) {
       return res.status(403).json({ error: "Portal is not active for this state" });
     }
