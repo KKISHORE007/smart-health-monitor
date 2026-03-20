@@ -16,7 +16,9 @@ async function handler(req, res) {
   try {
     // ── Super Admin ──────────────────────────────────────────
     if (normalizedRole === "superadmin") {
-      const admin = await prisma.superAdmin.findFirst();
+      const admins = await prisma.$queryRaw`SELECT * FROM SuperAdmin LIMIT 1`;
+      const admin = admins && admins.length > 0 ? admins[0] : null;
+      
       if (!admin || !(await bcrypt.compare(password, admin.password)))
         return res.status(401).json({ error: "Invalid credentials" });
       const token = signToken({ id: admin.id, role: "SUPERADMIN" });
@@ -26,7 +28,9 @@ async function handler(req, res) {
     // ── Health Minister ───────────────────────────────────────
     const trimmedId = id ? id.trim() : "";
     if (normalizedRole === "minister") {
-      const minister = await prisma.healthMinister.findFirst({ where: { id: trimmedId } });
+      const ministers = await prisma.$queryRaw`SELECT * FROM HealthMinister WHERE id = ${trimmedId} LIMIT 1`;
+      const minister = ministers && ministers.length > 0 ? ministers[0] : null;
+      
       if (!minister || !minister.isActive || !(await bcrypt.compare(password, minister.password))) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
@@ -36,12 +40,15 @@ async function handler(req, res) {
 
     // ── Patient / Doctor / Helper ─────────────────────────────
     if (!email) return res.status(400).json({ error: "Email required" });
-    const user = await prisma.user.findFirst({ where: { email } });
+    const users = await prisma.$queryRaw`SELECT * FROM User WHERE email = ${email} LIMIT 1`;
+    const user = users && users.length > 0 ? users[0] : null;
+
     if (!user || !user.isActive || !(await bcrypt.compare(password, user.password)))
       return res.status(401).json({ error: "Invalid credentials" });
 
     // Check if portal is active for user's state
-    const portal = await prisma.statePortal.findFirst({ where: { state: user.state } });
+    const portals = await prisma.$queryRaw`SELECT * FROM StatePortal WHERE state = ${user.state} LIMIT 1`;
+    const portal = portals && portals.length > 0 ? portals[0] : null;
     if (!portal || !portal.isUnlocked) {
       return res.status(403).json({ error: "Portal is not active for this state" });
     }
