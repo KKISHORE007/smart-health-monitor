@@ -2232,6 +2232,7 @@ function DoctorDashboard({ user, hospitals, users, symptoms, alerts, onLogout, o
   const [selPatient, setSelPatient] = useState(null);
   const [patientSearch, setPatientSearch] = useState("");
   const [filterDisease, setFilterDisease] = useState("");
+  const [patientSort, setPatientSort] = useState("symptoms_new");
   const hospital = hospitals.find(h => h.id === currentUser.hospitalId);
   const myPatients = users.filter(u => u.role==="patient" && u.hospitalId===currentUser.hospitalId);
   const mySymptoms = symptoms.filter(s => s.hospitalId===currentUser.hospitalId);
@@ -2247,6 +2248,16 @@ function DoctorDashboard({ user, hospitals, users, symptoms, alerts, onLogout, o
       return pSymptoms.some(s => s.detectedDisease === filterDisease);
     }
     return true;
+  });
+
+  const sortedPatients = [...filteredPatients].sort((a, b) => {
+    if (patientSort === "name_asc") return (a.name || "").localeCompare(b.name || "");
+    if (patientSort === "name_desc") return (b.name || "").localeCompare(a.name || "");
+    const aSymps = symptoms.filter(s => s.patientId === a.id);
+    const bSymps = symptoms.filter(s => s.patientId === b.id);
+    const aDate = aSymps.length > 0 ? new Date(aSymps[aSymps.length - 1].date).getTime() : 0;
+    const bDate = bSymps.length > 0 ? new Date(bSymps[bSymps.length - 1].date).getTime() : 0;
+    return patientSort === "symptoms_new" ? bDate - aDate : aDate - bDate;
   });
 
   const todaySymptoms = mySymptoms.filter(s => new Date(s.date).toDateString()===new Date().toDateString());
@@ -2422,8 +2433,18 @@ function DoctorDashboard({ user, hospitals, users, symptoms, alerts, onLogout, o
                 <option value="">All Diseases</option>
                 {Object.keys(DISEASE_SYMPTOMS).map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-              {(patientSearch||filterDisease) && (
-                <Btn variant="ghost" size="sm" onClick={()=>{setPatientSearch("");setFilterDisease("");}}>✕ Clear</Btn>
+              <select
+                value={patientSort}
+                onChange={e=>setPatientSort(e.target.value)}
+                style={{background:"#f8fafc",border:`1px solid ${C.border2}`,borderRadius:10,padding:"10px 14px",color:"#0d1117",fontSize:13,minWidth:160}}
+              >
+                <option value="symptoms_new">Symptoms: Newest</option>
+                <option value="symptoms_old">Symptoms: Oldest</option>
+                <option value="name_asc">Name (A-Z)</option>
+                <option value="name_desc">Name (Z-A)</option>
+              </select>
+              {(patientSearch||filterDisease||patientSort!=="symptoms_new") && (
+                <Btn variant="ghost" size="sm" onClick={()=>{setPatientSearch("");setFilterDisease("");setPatientSort("symptoms_new");}}>✕ Clear</Btn>
               )}
             </div>
 
@@ -2441,7 +2462,7 @@ function DoctorDashboard({ user, hospitals, users, symptoms, alerts, onLogout, o
               </Card>
             ) : (
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:14}}>
-                {filteredPatients.map(p => {
+                {sortedPatients.map(p => {
                   const pSymptoms = symptoms.filter(s=>s.patientId===p.id);
                   const lastReport = pSymptoms.slice(-1)[0];
                   const hasAlert = alerts.some(a => a.area?.toLowerCase()===p.area?.toLowerCase() && a.hospitalId===p.hospitalId && a.active);
