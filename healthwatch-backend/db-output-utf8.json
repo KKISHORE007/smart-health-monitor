@@ -1,0 +1,403 @@
+﻿Users: [
+  {
+    "id": "cmmxag8dv0004qo4atq52u7l5",
+    "name": "KISHORE K",
+    "role": "doctor",
+    "state": "Tamil Nadu"
+  },
+  {
+    "id": "cmmxaid0n0005qo4ayf9jgzeb",
+    "name": "PRAGATHISH S",
+    "role": "patient",
+    "state": "Tamil Nadu"
+  },
+  {
+    "id": "cmmxak5330008qo4a7lol6cz5",
+    "name": "NAVEENKUMAR T",
+    "role": "patient",
+    "state": "Tamil Nadu"
+  },
+  {
+    "id": "cmmxalww4000bqo4auqng08gr",
+    "name": "NIDEESH KUMAR A",
+    "role": "patient",
+    "state": "Tamil Nadu"
+  }
+]
+Ministers: [
+  {
+    "id": "HM-MH-001",
+    "name": "Tanaji Sawant",
+    "title": "Health Minister, Maharashtra",
+    "state": "Maharashtra",
+    "password": "$2a$12$ujHHdwo7AALjSSV4rhl1Ye5Rn3sIutyznymgSAGDvQHyIbVtDV4Ia",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:50.385Z",
+    "updatedAt": "2026-03-19T09:28:50.385Z"
+  },
+  {
+    "id": "HM-KA-001",
+    "name": "Dinesh Gundu Rao",
+    "title": "Health Minister, Karnataka",
+    "state": "Karnataka",
+    "password": "$2a$12$//3qhq./5JdJzd0tsOvlrumD.7ehBDGOWOoZDIDG5I7dSpsVJ.Zde",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:52.146Z",
+    "updatedAt": "2026-03-19T09:28:52.146Z"
+  },
+  {
+    "id": "HM-KL-001",
+    "name": "Veena George",
+    "title": "Health Minister, Kerala",
+    "state": "Kerala",
+    "password": "$2a$12$T.E8p.wy2JXdcm8kqq47suqvSB4RqYo0IntjS9/BEJEH2IVvw/esK",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:54.061Z",
+    "updatedAt": "2026-03-19T09:28:54.061Z"
+  },
+  {
+    "id": "HM-AP-001",
+    "name": "Y. Satya Kumar",
+    "title": "Health Minister, Andhra Pradesh",
+    "state": "Andhra Pradesh",
+    "password": "$2a$12$JBnuTeIGr0mWnVaAYcTEweHWJPFze/HY2GY4jPp0hZ4eubgEtc4qq",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:55.881Z",
+    "updatedAt": "2026-03-19T09:28:55.881Z"
+  },
+  {
+    "id": "HM-TG-001",
+    "name": "Damodar Raja Narasimha",
+    "title": "Health Minister, Telangana",
+    "state": "Telangana",
+    "password": "$2a$12$d3xu4l3ZhG1KgbxF8YPYd.8s9W5/y001xJCSgLft00EvaRm/CW1wS",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:57.791Z",
+    "updatedAt": "2026-03-19T09:28:57.791Z"
+  },
+  {
+    "id": "HM-GJ-001",
+    "name": "Rushikesh Patel",
+    "title": "Health Minister, Gujarat",
+    "state": "Gujarat",
+    "password": "$2a$12$H00TkmpjvbsJKQs46NqatuCBVke8iaf3Z7VF3hDRLrGb8EZlO2gAG",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:00.091Z",
+    "updatedAt": "2026-03-19T09:29:00.091Z"
+  },
+  {
+    "id": "HM-RJ-001",
+    "name": "Gajendra Singh",
+    "title": "Health Minister, Rajasthan",
+    "state": "Rajasthan",
+    "password": "$2a$12$4no2bV0gKwEHpbkRAwfNrusNrIflYz1T0BjDtsp/bL6CTw.UPHFJW",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:01.770Z",
+    "updatedAt": "2026-03-19T09:29:01.770Z"
+  },
+  {
+    "id": "HM-MP-001",
+    "name": "Vishvas Sarang",
+    "title": "Health Minister, Madhya Pradesh",
+    "state": "Madhya Pradesh",
+    "password": "$2a$12$8HN17RfX9liKgvW0JCOgmeglr0PnfKG.R2.CBI12NoSj2yW9bUICe",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:04.068Z",
+    "updatedAt": "2026-03-19T09:29:04.068Z"
+  },
+  {
+    "id": "HM-UP-001",
+    "name": "Brajesh Pathak",
+    "title": "Health Minister, Uttar Pradesh",
+    "state": "Uttar Pradesh",
+    "password": "$2a$12$yD8M6jcXvu3mtgjr2CWteeIJbtYcMhNJ.dtmQH3g51RGuL56EDXTi",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:05.695Z",
+    "updatedAt": "2026-03-19T09:29:05.695Z"
+  },
+  {
+    "id": "HM-WB-001",
+    "name": "Chandrima Bhattacharya",
+    "title": "Health Minister, West Bengal",
+    "state": "West Bengal",
+    "password": "$2a$12$EkP.WFkj7a3H/JpWNfV9bu3Ni0X/XW74HaTM0/.zkTlem7aUXiJG.",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:07.382Z",
+    "updatedAt": "2026-03-19T09:29:07.382Z"
+  },
+  {
+    "id": "HM-TN-001",
+    "name": "Ma. Subramanian",
+    "title": "Health Minister, Tamil Nadu",
+    "state": "Tamil Nadu",
+    "password": "$2a$12$dI9TTkRxY2Fbk3vjKjSawuXTVMGjoVIGux/vJ2tmcxi4ZNa0q6jsu",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:28:47.054Z",
+    "updatedAt": "2026-03-19T09:28:47.054Z"
+  },
+  {
+    "id": "HM-PB-001",
+    "name": "Balbir Singh",
+    "title": "Health Minister, Punjab",
+    "state": "Punjab",
+    "password": "$2a$12$QxyXVKZfuNWF9TQJUXdk6OKOcxOMTplG52/moBkVKdplccsf6o0KC",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:09.222Z",
+    "updatedAt": "2026-03-19T09:29:09.222Z"
+  },
+  {
+    "id": "HM-HR-001",
+    "name": "Anil Vij",
+    "title": "Health Minister, Haryana",
+    "state": "Haryana",
+    "password": "$2a$12$hpXOCgHE51gaB0Sa4JLe6u7.wVD9vYSM31fdU/13XcrAxfqNVkUVK",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:11.237Z",
+    "updatedAt": "2026-03-19T09:29:11.237Z"
+  },
+  {
+    "id": "HM-BR-001",
+    "name": "Mangal Pandey",
+    "title": "Health Minister, Bihar",
+    "state": "Bihar",
+    "password": "$2a$12$JbOaVN/SwxSRJm7VMjacWOvCzajBglaFz0JDCg.iRKZu127FhAXNC",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:12.580Z",
+    "updatedAt": "2026-03-19T09:29:12.580Z"
+  },
+  {
+    "id": "HM-AS-001",
+    "name": "Keshab Mahanta",
+    "title": "Health Minister, Assam",
+    "state": "Assam",
+    "password": "$2a$12$XlmA0XZfBngeNlAFM1uma.i3bQ2X1ZpH/t4zTTCse1OuMRBYzBus2",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:13.714Z",
+    "updatedAt": "2026-03-19T09:29:13.714Z"
+  },
+  {
+    "id": "HM-OR-001",
+    "name": "Mukesh Mahaling",
+    "title": "Health Minister, Odisha",
+    "state": "Odisha",
+    "password": "$2a$12$p6k7XvxmZa.p4REoRKpJses8pf3roJAQk9VFwwjURkc6k9ff3SCpy",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:14.793Z",
+    "updatedAt": "2026-03-19T09:29:14.793Z"
+  },
+  {
+    "id": "HM-JH-001",
+    "name": "Banna Gupta",
+    "title": "Health Minister, Jharkhand",
+    "state": "Jharkhand",
+    "password": "$2a$12$6i.T8BwSdGtUYr4yLbFrsu2rWguVDm6PQF0wOcr3HqZlXKTnfKrYm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:16.055Z",
+    "updatedAt": "2026-03-19T09:29:16.055Z"
+  },
+  {
+    "id": "HM-HP-001",
+    "name": "Dhani Ram Shandil",
+    "title": "Health Minister, Himachal Pradesh",
+    "state": "Himachal Pradesh",
+    "password": "$2a$12$GVAzFyhYzdK/7B0wRfxb1.jmhfPXy0lVs9XR7oPHIhKCbd2qh8qwC",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:17.353Z",
+    "updatedAt": "2026-03-19T09:29:17.353Z"
+  },
+  {
+    "id": "HM-UK-001",
+    "name": "Dhan Singh Rawat",
+    "title": "Health Minister, Uttarakhand",
+    "state": "Uttarakhand",
+    "password": "$2a$12$yRE23e9mhlJNrKnsrf9d.eTXUO7WHTwStf1JvzmoEiM16YxnffRV.",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:18.927Z",
+    "updatedAt": "2026-03-19T09:29:18.927Z"
+  },
+  {
+    "id": "HM-CG-001",
+    "name": "Shyam Bihari Jaiswal",
+    "title": "Health Minister, Chhattisgarh",
+    "state": "Chhattisgarh",
+    "password": "$2a$12$iaLiLWSxV5e5U1K4HL.1Aux/sqC1en36N7sHC1g8aQpX5KLhx31cm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:20.194Z",
+    "updatedAt": "2026-03-19T09:29:20.194Z"
+  },
+  {
+    "id": "HM-GA-001",
+    "name": "Vishwajit Rane",
+    "title": "Health Minister, Goa",
+    "state": "Goa",
+    "password": "$2a$12$wktSrkbwPBdQje1xHMDFHesdia5g1S43UsRbOEpuBJQ2gkkniQ4YS",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:21.528Z",
+    "updatedAt": "2026-03-19T09:29:21.528Z"
+  },
+  {
+    "id": "HM-TR-001",
+    "name": "Sushanta Chowdhury",
+    "title": "Health Minister, Tripura",
+    "state": "Tripura",
+    "password": "$2a$12$8.5Jwgl3rafCG76SIrwqB.WNvht49NYeO3Im8v9nGMPy0HMsDSNoe",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:22.652Z",
+    "updatedAt": "2026-03-19T09:29:22.652Z"
+  },
+  {
+    "id": "HM-ML-001",
+    "name": "Ampareen Lyngdoh",
+    "title": "Health Minister, Meghalaya",
+    "state": "Meghalaya",
+    "password": "$2a$12$ocw495sXzNeQpbz07TfmSem6riXVyvuGXCXuuNAWiO..vkzzi5tXa",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:24.019Z",
+    "updatedAt": "2026-03-19T09:29:24.019Z"
+  },
+  {
+    "id": "HM-MN-001",
+    "name": "Sapam Ranjan Singh",
+    "title": "Health Minister, Manipur",
+    "state": "Manipur",
+    "password": "$2a$12$CCqjcvbd/fcGbkNKybvFVec85g.pa10Mdkr8oYfxFj6Qn10XXeDvm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:25.295Z",
+    "updatedAt": "2026-03-19T09:29:25.295Z"
+  },
+  {
+    "id": "HM-NL-001",
+    "name": "S. Pangyu Phom",
+    "title": "Health Minister, Nagaland",
+    "state": "Nagaland",
+    "password": "$2a$12$1xUJiE6owT21Tk6WgIdHS.TEHUvPY0aMKkUBRzm643.atnBSBzToO",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:26.597Z",
+    "updatedAt": "2026-03-19T09:29:26.597Z"
+  },
+  {
+    "id": "HM-AR-001",
+    "name": "Alo Libang",
+    "title": "Health Minister, Arunachal Pradesh",
+    "state": "Arunachal Pradesh",
+    "password": "$2a$12$MohM/dt8e39zPeRRTiyt5.Y3N/jnDm0hGricZmtqiIG1cjvpJkifa",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:27.836Z",
+    "updatedAt": "2026-03-19T09:29:27.836Z"
+  },
+  {
+    "id": "HM-MZ-001",
+    "name": "Dr. R. Lalthangliana",
+    "title": "Health Minister, Mizoram",
+    "state": "Mizoram",
+    "password": "$2a$12$wg405.Su0de9IbONYGd9sOlXVC1.kuYryYLiwv0BgLYkr8Vkpn8rm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:29.421Z",
+    "updatedAt": "2026-03-19T09:29:29.421Z"
+  },
+  {
+    "id": "HM-SK-001",
+    "name": "MK Sharma",
+    "title": "Health Minister, Sikkim",
+    "state": "Sikkim",
+    "password": "$2a$12$uJJue1bIpE0pn4QSFx/h/O55OTQLRgfk.MMXd/dt.1aRdpEDiveRm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:30.960Z",
+    "updatedAt": "2026-03-19T09:29:30.960Z"
+  },
+  {
+    "id": "HM-JK-001",
+    "name": "Sakeena Masood",
+    "title": "Health Minister, Jammu & Kashmir",
+    "state": "Jammu & Kashmir",
+    "password": "$2a$12$1Ue3.F95q18AzNnT.nYeyOcz.bEwQrUu80o571n5Zex.oqW0cuKhS",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:32.104Z",
+    "updatedAt": "2026-03-19T09:29:32.104Z"
+  },
+  {
+    "id": "HM-DL-001",
+    "name": "Saurabh Bharadwaj",
+    "title": "Health Minister, Delhi",
+    "state": "Delhi",
+    "password": "$2a$12$jns.bdJJyKVIHJJZ1.1xMuSZAw0xFdMixlfkxVfV65torwOry1hiO",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:33.259Z",
+    "updatedAt": "2026-03-19T09:29:33.259Z"
+  },
+  {
+    "id": "HM-PY-001",
+    "name": "Malladi Krishna Rao",
+    "title": "Health Minister, Puducherry",
+    "state": "Puducherry",
+    "password": "$2a$12$2bLPc.fQWjQgZiVDzAfBSe3XVtgGtMi83EzKVFnQC5NVArUYU.0Dm",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:34.869Z",
+    "updatedAt": "2026-03-19T09:29:34.869Z"
+  },
+  {
+    "id": "HM-CH-001",
+    "name": "Saurabh Bharadwaj",
+    "title": "Health Minister, Chandigarh",
+    "state": "Chandigarh",
+    "password": "$2a$12$K0SeuKpX7go00ghAXsOi8.1oMToo1n7bXYgN8Yu4FGYnb8/Yn1gR2",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:36.307Z",
+    "updatedAt": "2026-03-19T09:29:36.307Z"
+  },
+  {
+    "id": "HM-AN-001",
+    "name": "D.K. Joshi",
+    "title": "Health Minister, Andaman & Nicobar",
+    "state": "Andaman & Nicobar Islands",
+    "password": "$2a$12$Bh1yAerS9rtrmR/E/hfInuzoI2U1XzyOvTC4aZQpwUYgQUdnGW29O",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:38.032Z",
+    "updatedAt": "2026-03-19T09:29:38.032Z"
+  },
+  {
+    "id": "HM-DD-001",
+    "name": "Praful Patel",
+    "title": "Health Minister, Dadra & NH / D&D",
+    "state": "Dadra & Nagar Haveli and Daman & Diu",
+    "password": "$2a$12$Dw7TF7xPtuZL70Vrk0ukxu67mP2NWcqLe1bs0ERH69LcmJA0VA8nu",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:39.404Z",
+    "updatedAt": "2026-03-19T09:29:39.404Z"
+  },
+  {
+    "id": "HM-LD-001",
+    "name": "Praful Patel",
+    "title": "Health Minister, Lakshadweep",
+    "state": "Lakshadweep",
+    "password": "$2a$12$XAWOYzPEuLQzp1YsDf.uuOVoAmp/5tvtx5LNafws/ZyjqrV5PuiB6",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:40.782Z",
+    "updatedAt": "2026-03-19T09:29:40.782Z"
+  },
+  {
+    "id": "HM-LA-001",
+    "name": "B.D. Mishra",
+    "title": "Health Minister, Ladakh",
+    "state": "Ladakh",
+    "password": "$2a$12$33/Y2ZTG2cThWh0ml1Ke6eNlb2K8zAw/IqTYsw5BNwLPtvv1ViM5i",
+    "isActive": true,
+    "createdAt": "2026-03-19T09:29:42.457Z",
+    "updatedAt": "2026-03-19T09:29:42.457Z"
+  }
+]
+Alerts: [
+  {
+    "id": "cmmxam1k8000fqo4avjw4lmxh",
+    "disease": "Cholera",
+    "hospitalId": "H1773913609616",
+    "district": "Karur",
+    "area": "Karur",
+    "state": "Tamil Nadu",
+    "patientCount": 3,
+    "isActive": true,
+    "isResolved": false,
+    "createdAt": "2026-03-19T09:53:49.928Z",
+    "lastUpdated": "2026-03-19T09:53:49.928Z"
+  }
+]

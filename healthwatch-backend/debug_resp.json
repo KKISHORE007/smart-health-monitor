@@ -1,0 +1,22 @@
+{
+  "status": 201,
+  "result": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtbXV2cG56ZzAwMDB3anFra3ptM215YjUiLCJyb2xlIjoiZG9jdG9yIiwic3RhdGUiOiJUYW1pbCBOYWR1IiwiaG9zcGl0YWxJZCI6IkgxNzczNTMwMDE5OTM0IiwiaWF0IjoxNzczNzY4MDc0LCJleHAiOjE3NzQzNzI4NzR9.vFcJZonBUnwgVB3KNRZFkc9s-qlphTRe1Q1wL4CeKbo",
+    "user": {
+      "id": "cmmuvpnzg0000wjqkkzm3myb5",
+      "name": "Dr. Browser Test",
+      "email": "drbrowser_1773768069199@example.com",
+      "role": "doctor",
+      "state": "Tamil Nadu",
+      "district": "Karur",
+      "area": "karur",
+      "profileComplete": true,
+      "photo": null,
+      "dob": null,
+      "familyMale": 1,
+      "familyFemale": 0,
+      "regularCondition": "",
+      "hospitalId": "H1773530019934"
+    }
+  }
+}

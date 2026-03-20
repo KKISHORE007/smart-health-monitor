@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SuperAdmin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HealthMinister {
+  id          String       @id
+  name        String
+  title       String
+  state       String       @unique
+  password    String
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  hospitals   Hospital[]
+  statePortal StatePortal?
+}
+
+model StatePortal {
+  id         String         @id @default(cuid())
+  state      String         @unique
+  isUnlocked Boolean        @default(false)
+  unlockedAt DateTime?
+  lockedAt   DateTime?
+  updatedAt  DateTime       @updatedAt
+  minister   HealthMinister @relation(fields: [state], references: [state])
+}
+
+model Hospital {
+  id        String          @id
+  name      String
+  district  String
+  state     String
+  area      String?
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  minister  HealthMinister  @relation(fields: [state], references: [state])
+  alerts    OutbreakAlert[]
+  symptoms  SymptomReport[]
+  users     User[]
+
+  @@index([state], map: "Hospital_state_fkey")
+}
+
+model User {
+  id               String          @id @default(cuid())
+  name             String
+  email            String          @unique
+  phone            String?
+  password         String
+  role             String
+  state            String
+  district         String
+  area             String?
+  dob              DateTime?
+  gender           String?
+  bloodGroup       String?
+  familyMale       Int?            @default(0)
+  familyFemale     Int?            @default(0)
+  regularCondition String?
+  profileComplete  Boolean         @default(false)
+  photo            String?
+  hospitalId       String?
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  resolvedCases    ResolvedCase[]
+  symptoms         SymptomReport[]
+  hospital         Hospital?       @relation(fields: [hospitalId], references: [id])
+
+  @@index([hospitalId], map: "User_hospitalId_fkey")
+}
+
+model SymptomReport {
+  id              String               @id @default(cuid())
+  patientId       String
+  hospitalId      String
+  state           String
+  district        String
+  area            String?
+  symptoms        Json
+  detectedDisease String?
+  alertSent       Boolean              @default(false)
+  isResolved      Boolean              @default(false)
+  submittedAt     DateTime             @default(now())
+  outbreakAlerts  OutbreakAlertEntry[]
+  hospital        Hospital             @relation(fields: [hospitalId], references: [id])
+  patient         User                 @relation(fields: [patientId], references: [id])
+
+  @@index([hospitalId], map: "SymptomReport_hospitalId_fkey")
+  @@index([patientId], map: "SymptomReport_patientId_fkey")
+}
+
+model OutbreakAlert {
+  id              String               @id @default(cuid())
+  disease         String
+  hospitalId      String
+  district        String
+  area            String?
+  state           String
+  patientCount    Int
+  isActive        Boolean              @default(true)
+  isResolved      Boolean              @default(false)
+  isViewedByAdmin Boolean              @default(false)
+  createdAt       DateTime             @default(now())
+  lastUpdated     DateTime             @updatedAt
+  hospital        Hospital             @relation(fields: [hospitalId], references: [id])
+  entries         OutbreakAlertEntry[]
+
+  @@index([hospitalId], map: "OutbreakAlert_hospitalId_fkey")
+}
+
+model OutbreakAlertEntry {
+  id              String        @id @default(cuid())
+  alertId         String
+  symptomReportId String
+  alert           OutbreakAlert @relation(fields: [alertId], references: [id])
+  symptomReport   SymptomReport @relation(fields: [symptomReportId], references: [id])
+
+  @@unique([alertId, symptomReportId])
+  @@index([symptomReportId], map: "OutbreakAlertEntry_symptomReportId_fkey")
+}
+
+model ResolvedCase {
+  id         String   @id @default(cuid())
+  caseId     String   @unique
+  resolvedBy String
+  resolvedAt DateTime @default(now())
+  notes      String?
+  doctor     User     @relation(fields: [resolvedBy], references: [id])
+
+  @@index([resolvedBy], map: "ResolvedCase_resolvedBy_fkey")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actorRole String?
+  action    String
+  target    String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
