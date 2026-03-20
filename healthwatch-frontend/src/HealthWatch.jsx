@@ -4379,6 +4379,7 @@ export default function App() {
           district: a.district, area: a.area, state: a.state,
           patientCount: a.patientCount, date: a.createdAt,
           lastUpdated: a.lastUpdated, active: a.isActive,
+          isResolved: a.isResolved, isViewedByAdmin: a.isViewedByAdmin,
           entries: a.entries,
         }));
         updateState({ alerts: mapped });
@@ -4484,6 +4485,8 @@ export default function App() {
           district: a.district, area: a.area, state: a.state,
           patientCount: a.patientCount, date: a.createdAt,
           lastUpdated: a.lastUpdated, active: a.isActive,
+          isResolved: a.isResolved, isViewedByAdmin: a.isViewedByAdmin,
+          entries: a.entries,
         }))
       });
     } catch(e) { console.error(e); }
