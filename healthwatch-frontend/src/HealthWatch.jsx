@@ -993,21 +993,21 @@ function LandingPage({ statePortals, onHMAdmin, onSuperAdmin, onLogin, onSignup 
       {/* ── HERO TEXT ── */}
       <div style={{position:"absolute",inset:0,zIndex:10,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,textAlign:"center"}}>
         <div className="slide-in">
-          <div style={{fontSize:12,color:"#38bdf8",fontFamily:"'JetBrains Mono',monospace",letterSpacing:3,marginBottom:24}}>
+          <div style={{fontSize:12,color:"#38bdf8",fontFamily:"'JetBrains Mono',monospace",letterSpacing:3,marginBottom:32}}>
             GOVERNMENT OF INDIA · HEALTH MINISTRY
           </div>
-          <h1 style={{fontSize:"clamp(32px,5vw,68px)",fontWeight:800,letterSpacing:-2,lineHeight:1.05,maxWidth:900,margin:"0 auto 48px",textShadow:"0 4px 20px rgba(15,23,42,0.4)",textAlign:"center"}}>
+          <h1 style={{fontSize:"clamp(32px,5vw,68px)",fontWeight:800,letterSpacing:-2,lineHeight:1.05,maxWidth:900,margin:"0 auto 60px",textShadow: "0 4px 24px rgba(15,23,42,0.6)",textAlign:"center"}}>
             <span style={{color:"#ffffff"}}>Smart Community Health</span><br/>
             <span style={{background:"linear-gradient(135deg,#38bdf8,#3b82f6,#1d4ed8)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",filter:"drop-shadow(0 2px 8px rgba(59,130,246,0.5))"}}>
               Early Warning System
             </span>
           </h1>
-          <p style={{color:"rgba(226,232,240,0.9)",fontSize:16,maxWidth:740,margin:"0 auto 64px",lineHeight:2.0,textShadow:"0 2px 8px rgba(0,0,0,0.6))", textAlign:"center", letterSpacing:"0.4px"}}>
+          <p style={{color:"rgba(226,232,240,0.9)",fontSize:17,maxWidth:800,margin:"0 auto 80px",lineHeight:2.2,textShadow:"0 2px 12px rgba(0,0,0,0.8)", textAlign:"center", letterSpacing:"0.6px"}}>
             Protecting communities across India from waterborne disease outbreaks through real-time surveillance, district-level monitoring, and rapid alert systems.
           </p>
 
           {/* Always show Login + Signup CTA */}
-          <div style={{display:"flex",gap:16,justifyContent:"center",flexWrap:"wrap",marginBottom:64}}>
+          <div style={{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap",marginBottom:80}}>
             <button onClick={onLogin} style={{background:`linear-gradient(135deg,${C.teal},${C.tealD})`,border:"none",borderRadius:12,padding:"16px 40px",fontSize:17,color:"#fff",cursor:"pointer",fontWeight:700,fontFamily:"'Sora',sans-serif",boxShadow:`0 4px 24px ${C.teal}66`}}>🔑 Patient / Doctor Login</button>
             <button onClick={onSignup} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:12,padding:"16px 40px",fontSize:17,color:"#fff",cursor:"pointer",fontWeight:700,fontFamily:"'Sora',sans-serif",backdropFilter:"blur(8px)"}}>✦ Create Account</button>
           </div>
