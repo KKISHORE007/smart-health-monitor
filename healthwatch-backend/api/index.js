@@ -1,71 +1,60 @@
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath, pathToFileURL } from 'url';
-import { dirname, join } from 'path';
-import fs from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Import handlers from api_logic
+import adminMinistersId from '../api_logic/admin/ministers/[id].js';
+import adminMinistersIndex from '../api_logic/admin/ministers/index.js';
+import alertsIndex from '../api_logic/alerts/index.js';
+import authLogin from '../api_logic/auth/login.js';
+import authSignup from '../api_logic/auth/signup.js';
+import casesResolve from '../api_logic/cases/resolve.js';
+import hospitalsId from '../api_logic/hospitals/[id].js';
+import hospitalsIndex from '../api_logic/hospitals/index.js';
+import apiIndex from '../api_logic/index.js';
+import portalsIndex from '../api_logic/portals/index.js';
+import symptomsIndex from '../api_logic/symptoms/index.js';
+import usersIndex from '../api_logic/users/index.js';
+import usersProfile from '../api_logic/users/profile.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Helper to load handlers
-async function loadHandler(path) {
-  try {
-    const module = await import(pathToFileURL(path).href);
-    return module.default;
-  } catch (e) {
-    console.error(`Error loading handler at ${path}:`, e);
-    return null;
-  }
-}
+// Routes mapping
+const routes = [
+  { path: '/api/admin/ministers/:id', handler: adminMinistersId },
+  { path: '/api/admin/ministers',     handler: adminMinistersIndex },
+  { path: '/api/alerts',              handler: alertsIndex },
+  { path: '/api/auth/login',           handler: authLogin },
+  { path: '/api/auth/signup',          handler: authSignup },
+  { path: '/api/cases/resolve',        handler: casesResolve },
+  { path: '/api/hospitals/:id',        handler: hospitalsId },
+  { path: '/api/hospitals',            handler: hospitalsIndex },
+  { path: '/api/portals',              handler: portalsIndex },
+  { path: '/api/symptoms',             handler: symptomsIndex },
+  { path: '/api/users/profile',        handler: usersProfile },
+  { path: '/api/users',                handler: usersIndex },
+  { path: '/api',                      handler: apiIndex }
+];
 
-// Routes mapping based on the api_logic folder structure
-const apiLogicDir = join(__dirname, '..', 'api_logic');
-
-async function setupRoutes(app, dir, prefix = '/api') {
-  if (!fs.existsSync(dir)) return;
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const fullPath = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      await setupRoutes(app, fullPath, `${prefix}/${entry.name}`);
-    } else if (entry.name.endsWith('.js')) {
-      let routePath = entry.name === 'index.js' ? prefix : `${prefix}/${entry.name.replace('.js', '')}`;
-      routePath = routePath.replace(/\[([^\]]+)\]/g, ':$1');
-      
-      app.all(routePath, async (req, res) => {
-        const handler = await loadHandler(fullPath);
-        if (!handler) {
-          return res.status(500).json({ error: `Could not load handler for ${routePath}` });
-        }
-        try {
-          // Vercel merges route params into req.query in standalone mode
-          // We manually emulate this here
-          const mergedQuery = { ...req.query, ...req.params };
-          Object.defineProperty(req, 'query', {
-            value: mergedQuery,
-            enumerable: true,
-            configurable: true,
-            writable: true
-          });
-          await handler(req, res);
-        } catch (error) {
-          console.error(`Error in handler ${routePath}:`, error);
-          if (!res.headersSent) res.status(500).send('Internal Server Error');
-        }
+// Register routes
+routes.forEach(({ path, handler }) => {
+  app.all(path, async (req, res) => {
+    try {
+      // Emulate Vercel's merging of query and params for consistency
+      const mergedQuery = { ...req.query, ...req.params };
+      Object.defineProperty(req, 'query', {
+        value: mergedQuery,
+        enumerable: true,
+        configurable: true,
+        writable: true
       });
+      await handler(req, res);
+    } catch (error) {
+      console.error(`Error in route ${path}:`, error);
+      if (!res.headersSent) res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
-  }
-}
-
-await setupRoutes(app, apiLogicDir);
-
-// Catch-all for /api
-app.get('/api', (req, res) => {
-  res.json({ status: "✅ HealthWatch API is running (Consolidated)" });
+  });
 });
 
 export default app;
