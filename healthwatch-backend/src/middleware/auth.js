@@ -1,7 +1,7 @@
 // src/middleware/auth.js
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "healthwatch-super-secret-jwt-key-2024-kkishore007-secure-random-string-xyz";
 
 export function signToken(payload, expiresIn = "7d") {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
