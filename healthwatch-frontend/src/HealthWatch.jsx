@@ -1913,14 +1913,8 @@ function ProfileView({ user, hospitals, onUpdateProfile }) {
         {/* Photo edit panel */}
         {editingPhoto && (
           <div style={{marginTop:24,paddingTop:20,borderTop:"1px solid #e5e7eb"}}>
-            <div style={{fontSize:13,fontWeight:700,color:"#0d1117",marginBottom:12}}>📸 Update Profile Photo</div>
-            <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
-              <input ref={fileRef} type="file" accept="image/*" onChange={handleFile}
-                style={{display:"none"}} />
-              <button onClick={()=>fileRef.current.click()} style={{
-                background:"#f0f9ff",border:"1px solid #7dd3fc",borderRadius:10,
-                padding:"10px 20px",fontSize:13,color:"#0369a1",cursor:"pointer",fontWeight:700,
-              }}>🖼️ Choose Photo</button>
+            <PhotoCapture photo={photo} onPhoto={(b64) => { setPhoto(b64); setPreviewSrc(b64); }} />
+            <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap", marginTop: 12}}>
               <Btn onClick={savePhoto} disabled={loading || !photo}>
                 {loading ? <Spinner /> : "✓ Save Photo"}
               </Btn>
