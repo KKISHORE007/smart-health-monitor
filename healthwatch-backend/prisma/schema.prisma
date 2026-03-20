@@ -1,5 +1,5 @@
 // HealthWatch Database Schema
-// Provider: PostgreSQL (Vercel Postgres / Neon)
+// Provider: MySQL (TiDB / PlanetScale style)
 // ORM: Prisma
 
 generator client {
@@ -82,7 +82,7 @@ model User {
   email           String   @unique
   phone           String?
   password        String                  // bcrypt hashed
-  role            Role
+  role            String                  // Changed from Enum to String to avoid validation issues
   state           String
   district        String
   area            String?
@@ -106,14 +106,6 @@ model User {
 
   symptoms        SymptomReport[]
   resolvedCases   ResolvedCase[]
-}
-
-enum Role {
-  SUPERADMIN
-  MINISTER
-  DOCTOR
-  PATIENT
-  HELPER
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -190,7 +182,7 @@ model ResolvedCase {
 model AuditLog {
   id        String   @id @default(cuid())
   actorId   String?                      // userId or "superadmin"
-  actorRole String?
+  actorRole String?                      // Changed from Enum to String to avoid validation issues
   action    String                       // e.g. "LOGIN", "ADD_HOSPITAL", "UNLOCK_PORTAL"
   target    String?                      // e.g. hospitalId, alertId
   details   Json?
