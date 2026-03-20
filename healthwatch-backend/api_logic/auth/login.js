@@ -1,7 +1,7 @@
 // api/auth/login.js  — POST /api/auth/login
 // Handles: patient, doctor, helper, health minister, super admin
 
-import { prisma } from "../../src/lib/prisma.js";
+import pool from "../../src/lib/mysql.js";
 import { signToken } from "../../src/middleware/auth.js";
 import { withCors } from "../../src/middleware/cors.js";
 import bcrypt from "bcryptjs";
@@ -16,7 +16,7 @@ async function handler(req, res) {
   try {
     // ── Super Admin ──────────────────────────────────────────
     if (normalizedRole === "superadmin") {
-      const admins = await prisma.$queryRaw`SELECT * FROM SuperAdmin LIMIT 1`;
+      const [admins] = await pool.execute('SELECT * FROM SuperAdmin LIMIT 1');
       const admin = admins && admins.length > 0 ? admins[0] : null;
       
       if (!admin || !(await bcrypt.compare(password, admin.password)))
@@ -26,9 +26,9 @@ async function handler(req, res) {
     }
 
     // ── Health Minister ───────────────────────────────────────
-    const trimmedId = id ? id.trim() : "";
     if (normalizedRole === "minister") {
-      const ministers = await prisma.$queryRaw`SELECT * FROM HealthMinister WHERE id = ${trimmedId} LIMIT 1`;
+      const trimmedId = id ? id.trim() : "";
+      const [ministers] = await pool.execute('SELECT * FROM HealthMinister WHERE id = ? LIMIT 1', [trimmedId]);
       const minister = ministers && ministers.length > 0 ? ministers[0] : null;
       
       if (!minister || !minister.isActive || !(await bcrypt.compare(password, minister.password))) {
@@ -40,14 +40,14 @@ async function handler(req, res) {
 
     // ── Patient / Doctor / Helper ─────────────────────────────
     if (!email) return res.status(400).json({ error: "Email required" });
-    const users = await prisma.$queryRaw`SELECT * FROM User WHERE email = ${email} LIMIT 1`;
+    const [users] = await pool.execute('SELECT * FROM User WHERE email = ? LIMIT 1', [email]);
     const user = users && users.length > 0 ? users[0] : null;
 
     if (!user || !user.isActive || !(await bcrypt.compare(password, user.password)))
       return res.status(401).json({ error: "Invalid credentials" });
 
     // Check if portal is active for user's state
-    const portals = await prisma.$queryRaw`SELECT * FROM StatePortal WHERE state = ${user.state} LIMIT 1`;
+    const [portals] = await pool.execute('SELECT * FROM StatePortal WHERE state = ? LIMIT 1', [user.state]);
     const portal = portals && portals.length > 0 ? portals[0] : null;
     if (!portal || !portal.isUnlocked) {
       return res.status(403).json({ error: "Portal is not active for this state" });

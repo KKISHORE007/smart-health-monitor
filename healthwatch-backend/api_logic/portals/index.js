@@ -5,22 +5,22 @@
 import { prisma } from "../../src/lib/prisma.js";
 import { requireRole } from "../../src/middleware/auth.js";
 import { withCors } from "../../src/middleware/cors.js";
+import pool from "../../src/lib/mysql.js";
 
 async function handler(req, res) {
   if (req.method === "GET") {
-    // Use raw query to bypass any Prisma client validation issues online.
-    // Joining HealthMinister with StatePortal manually.
-    const activeMinisters = await prisma.$queryRaw`
+    // Use direct mysql query to bypass Prisma client issues.
+    const [activeMinisters] = await pool.execute(`
       SELECT 
         hm.state,
         sp.isUnlocked
       FROM HealthMinister hm
       LEFT JOIN StatePortal sp ON hm.state = sp.state
-      WHERE hm.isActive = true
-    `;
+      WHERE hm.isActive = 1
+    `);
     
     // Return as map { state: boolean }
-    const map = { _v: "deploy_check_2026_03_20_v6" };
+    const map = { _v: "deploy_check_2026_03_20_v7_direct_sql" };
     activeMinisters.forEach(m => {
       // Raw query returns result as array of objects { state: string, isUnlocked: number|boolean }
       map[m.state] = !!m.isUnlocked;
