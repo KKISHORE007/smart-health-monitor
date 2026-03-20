@@ -1134,6 +1134,33 @@ function PhotoCapture({ photo, onPhoto }) {
   const [mode, setMode]     = useState("idle"); // idle | starting | camera | preview
   const [camErr, setCamErr] = useState("");
   const [facing, setFacing] = useState("user");
+  const [uploading, setUploading] = useState(false);
+
+  const uploadToImgbb = async (base64Str) => {
+    setUploading(true);
+    setCamErr("");
+    try {
+      const b64Data = base64Str.split(",")[1];
+      const formData = new FormData();
+      formData.append("image", b64Data);
+      
+      const res = await fetch("https://api.imgbb.com/1/upload?key=98685507b4e42c037a6da3038040916f", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success && data.data && data.data.url) {
+        onPhoto(data.data.url);
+      } else {
+        setCamErr("Failed to upload image to Cloud. Please try again.");
+      }
+    } catch(err) {
+      setCamErr("Upload error: " + err.message);
+    } finally {
+      setUploading(false);
+      setMode("preview");
+    }
+  };
 
   // Cleanup on unmount
   useEffect(() => {
@@ -1200,8 +1227,8 @@ function PhotoCapture({ photo, onPhoto }) {
     const startY = ((v.videoHeight || 480) - size) / 2;
     c.width = 256; c.height = 256;
     c.getContext("2d").drawImage(v, startX, startY, size, size, 0, 0, 256, 256);
-    onPhoto(c.toDataURL("image/jpeg", 0.8));
-    stopCamera(); setMode("preview");
+    stopCamera();
+    uploadToImgbb(c.toDataURL("image/jpeg", 0.8));
   };
 
   const flipCamera = () => {
@@ -1216,14 +1243,13 @@ function PhotoCapture({ photo, onPhoto }) {
       const img = new Image();
       img.onload = () => {
         const c = canvasRef.current;
-        if (!c) { onPhoto(ev.target.result); setMode("preview"); return; }
+        if (!c) { uploadToImgbb(ev.target.result); return; }
         const size = Math.min(img.width, img.height);
         const startX = (img.width - size) / 2;
         const startY = (img.height - size) / 2;
         c.width = 256; c.height = 256;
         c.getContext("2d").drawImage(img, startX, startY, size, size, 0, 0, 256, 256);
-        onPhoto(c.toDataURL("image/jpeg", 0.8));
-        setMode("preview");
+        uploadToImgbb(c.toDataURL("image/jpeg", 0.8));
       };
       img.src = ev.target.result;
     };
@@ -1237,8 +1263,14 @@ function PhotoCapture({ photo, onPhoto }) {
     <div style={{marginBottom:20}}>
       <div style={{fontSize:11,color:"#6b7280",fontFamily:"'JetBrains Mono',monospace",letterSpacing:1.2,marginBottom:10,textTransform:"uppercase"}}>Profile Photo (Optional)</div>
 
+      {uploading && (
+        <div style={{marginBottom:12,borderRadius:14,background:"#1e293b",minHeight:120,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{color:"#38bdf8",fontSize:13,fontWeight:700}}>☁️ Uploading to Secure Cloud...</div>
+        </div>
+      )}
+
       {/* Saved preview */}
-      {photo && mode !== "camera" && (
+      {photo && mode !== "camera" && !uploading && (
         <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:12,padding:"12px 16px",background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:12}}>
           <img src={photo} alt="profile" style={{width:72,height:72,borderRadius:"50%",objectFit:"cover",border:`3px solid ${C.teal}`,flexShrink:0}} />
           <div>
