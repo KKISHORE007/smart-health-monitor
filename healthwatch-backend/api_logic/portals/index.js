@@ -8,17 +8,22 @@ import { withCors } from "../../src/middleware/cors.js";
 
 async function handler(req, res) {
   if (req.method === "GET") {
-    // Instead of filtering portals by minister (which has issues in production), 
-    // we fetch active ministers and their state portals.
-    const activeMinisters = await prisma.healthMinister.findMany({
-      where: { isActive: true },
-      include: { statePortal: true },
-    });
+    // Use raw query to bypass any Prisma client validation issues online.
+    // Joining HealthMinister with StatePortal manually.
+    const activeMinisters = await prisma.$queryRaw`
+      SELECT 
+        hm.state,
+        sp.isUnlocked
+      FROM HealthMinister hm
+      LEFT JOIN StatePortal sp ON hm.state = sp.state
+      WHERE hm.isActive = true
+    `;
     
     // Return as map { state: boolean }
-    const map = { _v: "deploy_check_2026_03_20_v4" };
+    const map = { _v: "deploy_check_2026_03_20_v6" };
     activeMinisters.forEach(m => {
-      map[m.state] = m.statePortal ? m.statePortal.isUnlocked : false;
+      // Raw query returns result as array of objects { state: string, isUnlocked: number|boolean }
+      map[m.state] = !!m.isUnlocked;
     });
     return res.json(map);
   }

@@ -1,13 +1,13 @@
 {
   "version": 2,
   "functions": {
-    "api/index.js": {
+    "api_v2/index.js": {
       "maxDuration": 30
     }
   },
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" }
+    { "source": "/api/(.*)", "destination": "/api_v2" }
   ],
   "headers": [
     {
