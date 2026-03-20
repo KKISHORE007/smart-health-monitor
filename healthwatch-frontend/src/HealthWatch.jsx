@@ -1195,9 +1195,12 @@ function PhotoCapture({ photo, onPhoto }) {
   const capture = () => {
     const v = videoRef.current; const c = canvasRef.current;
     if (!v || !c) return;
-    c.width = v.videoWidth || 640; c.height = v.videoHeight || 480;
-    c.getContext("2d").drawImage(v, 0, 0);
-    onPhoto(c.toDataURL("image/jpeg", 0.85));
+    const size = Math.min(v.videoWidth || 640, v.videoHeight || 480);
+    const startX = ((v.videoWidth || 640) - size) / 2;
+    const startY = ((v.videoHeight || 480) - size) / 2;
+    c.width = 256; c.height = 256;
+    c.getContext("2d").drawImage(v, startX, startY, size, size, 0, 0, 256, 256);
+    onPhoto(c.toDataURL("image/jpeg", 0.8));
     stopCamera(); setMode("preview");
   };
 
@@ -1209,7 +1212,21 @@ function PhotoCapture({ photo, onPhoto }) {
   const handleFile = (e) => {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = ev => { onPhoto(ev.target.result); setMode("preview"); };
+    reader.onload = ev => { 
+      const img = new Image();
+      img.onload = () => {
+        const c = canvasRef.current;
+        if (!c) { onPhoto(ev.target.result); setMode("preview"); return; }
+        const size = Math.min(img.width, img.height);
+        const startX = (img.width - size) / 2;
+        const startY = (img.height - size) / 2;
+        c.width = 256; c.height = 256;
+        c.getContext("2d").drawImage(img, startX, startY, size, size, 0, 0, 256, 256);
+        onPhoto(c.toDataURL("image/jpeg", 0.8));
+        setMode("preview");
+      };
+      img.src = ev.target.result;
+    };
     reader.readAsDataURL(file);
     e.target.value = "";
   };
