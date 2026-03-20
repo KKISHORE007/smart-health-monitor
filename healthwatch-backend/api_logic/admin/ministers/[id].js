@@ -2,7 +2,7 @@
 // PATCH  /api/admin/ministers/:id  — update name/title/password
 // DELETE /api/admin/ministers/:id  — revoke (set isActive = false)
 
-import { prisma } from "../../../src/lib/prisma.js";
+import pool from "../../../src/lib/mysql.js";
 import { requireRole } from "../../../src/middleware/auth.js";
 import bcrypt from "bcryptjs";
 
@@ -14,14 +14,26 @@ export default async function handler(req, res) {
 
   if (req.method === "PATCH") {
     const { id: newId, name, title, password } = req.body || {};
-    const data = { isActive: true }; // Reactivate if it was revoked
-    if (newId) data.id = newId.trim();
-    if (name) data.name = name.trim();
-    if (title) data.title = title.trim();
-    if (password) data.password = await bcrypt.hash(password, 12);
-
+    
+    // We update fields dynamically
+    let updates = ["isActive = 1"];
+    let values = [];
+    
+    if (newId) { updates.push("id = ?"); values.push(newId.trim()); }
+    if (name) { updates.push("name = ?"); values.push(name.trim()); }
+    if (title) { updates.push("title = ?"); values.push(title.trim()); }
+    if (password) { updates.push("password = ?"); values.push(await bcrypt.hash(password, 12)); }
+    
+    values.push(id); // For the WHERE clause
+    
     try {
-      const updated = await prisma.healthMinister.update({ where: { id }, data });
+      await pool.execute(`UPDATE HealthMinister SET ${updates.join(', ')} WHERE id = ?`, values);
+      
+      const queryId = newId ? newId.trim() : id;
+      const [rows] = await pool.execute(`SELECT id, name, state FROM HealthMinister WHERE id = ?`, [queryId]);
+      if (rows.length === 0) return res.status(404).json({ error: "Minister not found" });
+      
+      const updated = rows[0];
       console.log(`[Backend] Updated minister ${id} -> ${updated.id}`);
       return res.json({ id: updated.id, name: updated.name, state: updated.state });
     } catch (err) {
@@ -32,28 +44,29 @@ export default async function handler(req, res) {
 
   if (req.method === "DELETE") {
     try {
-      const minister = await prisma.healthMinister.update({
-        where: { id },
-        data: { isActive: false },
-      });
-      // Also lock the portal for this state
-      if (minister.state) {
+      const [ministers] = await pool.execute(`SELECT state FROM HealthMinister WHERE id = ?`, [id]);
+      if (ministers.length === 0) {
+        console.log(`[Backend] Minister ${id} not found.`);
+        return res.json({ success: true, message: "Minister already revoked." });
+      }
+      const state = ministers[0].state;
+      
+      await pool.execute(`UPDATE HealthMinister SET isActive = 0 WHERE id = ?`, [id]);
+      
+      // Lock portal
+      if (state) {
         try {
-          await prisma.statePortal.update({
-            where: { state: minister.state },
-            data: { isUnlocked: false, lockedAt: new Date() }
-          });
+          const now = new Date();
+          await pool.execute(
+            `UPDATE StatePortal SET isUnlocked = 0, lockedAt = ?, updatedAt = ? WHERE state = ?`,
+            [now, now, state]
+          );
         } catch (err) {
-          // If portal doesn't exist, ignore (P2025)
-          console.log(`[Backend] Portal for ${minister.state} not found, skipping lock.`);
+          console.log(`[Backend] Portal for ${state} not found, skipping lock.`);
         }
       }
       return res.json({ success: true });
     } catch (err) {
-      if (err.code === "P2025") {
-        console.log(`[Backend] Minister ${id} not found, already revoked or deleted.`);
-        return res.json({ success: true, message: "Minister already revoked." });
-      }
       console.error("[Backend] Revoke error:", err);
       return res.status(500).json({ error: "Failed to revoke credentials." });
     }

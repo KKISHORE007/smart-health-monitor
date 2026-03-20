@@ -21,8 +21,8 @@ async function handler(req, res) {
       
       if (!admin || !(await bcrypt.compare(password, admin.password)))
         return res.status(401).json({ error: "Invalid credentials" });
-      const token = signToken({ id: admin.id, role: "SUPERADMIN" });
-      return res.json({ token, role: "SUPERADMIN" });
+      const token = signToken({ id: admin.id, role: "superadmin" });
+      return res.json({ token, role: "superadmin" });
     }
 
     // ── Health Minister ───────────────────────────────────────
@@ -34,8 +34,8 @@ async function handler(req, res) {
       if (!minister || !minister.isActive || !(await bcrypt.compare(password, minister.password))) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      const token = signToken({ id: minister.id, role: "MINISTER", state: minister.state, name: minister.name, title: minister.title });
-      return res.json({ token, role: "MINISTER", minister: { id: minister.id, name: minister.name, title: minister.title, state: minister.state } });
+      const token = signToken({ id: minister.id, role: "minister", state: minister.state, name: minister.name, title: minister.title });
+      return res.json({ token, role: "minister", minister: { id: minister.id, name: minister.name, title: minister.title, state: minister.state } });
     }
 
     // ── Patient / Doctor / Helper ─────────────────────────────

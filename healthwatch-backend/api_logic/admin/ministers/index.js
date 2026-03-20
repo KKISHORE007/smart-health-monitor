@@ -4,19 +4,21 @@
 // PATCH  /api/admin/ministers/:id      — update credentials (superadmin)
 // DELETE /api/admin/ministers/:id      — revoke (superadmin)
 
-import { prisma } from "../../../src/lib/prisma.js";
+import pool from "../../../src/lib/mysql.js";
 import { requireRole } from "../../../src/middleware/auth.js";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 
 export default async function handler(req, res) {
   const auth = requireRole(req, "superadmin");
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
   if (req.method === "GET") {
-    const ministers = await prisma.healthMinister.findMany({
-      orderBy: { state: "asc" },
-      select: { id: true, name: true, title: true, state: true, isActive: true, createdAt: true },
-    });
+    const [ministers] = await pool.execute(`
+      SELECT id, name, title, state, isActive, createdAt 
+      FROM HealthMinister 
+      ORDER BY state ASC
+    `);
     return res.json(ministers);
   }
 
@@ -27,18 +29,26 @@ export default async function handler(req, res) {
 
     const hashed = await bcrypt.hash(password, 12);
     try {
-      const minister = await prisma.healthMinister.create({
-        data: { id, name, title: title || `Health Minister, ${state}`, state, password: hashed },
-      });
+      const now = new Date();
+      // Create minister
+      await pool.execute(
+        `INSERT INTO HealthMinister (id, name, title, state, password, isActive, createdAt, updatedAt) 
+         VALUES (?, ?, ?, ?, ?, 1, ?, ?)`,
+        [id, name, title || `Health Minister, ${state}`, state, hashed, now, now]
+      );
+
       // Create portal entry for the state
-      await prisma.statePortal.upsert({
-        where: { state },
-        create: { state, isUnlocked: false },
-        update: {},
-      });
-      return res.status(201).json({ id: minister.id, name: minister.name, state: minister.state });
+      const portalId = randomUUID();
+      await pool.execute(
+        `INSERT INTO StatePortal (id, state, isUnlocked, updatedAt) 
+         VALUES (?, ?, 0, ?) 
+         ON DUPLICATE KEY UPDATE state=VALUES(state)`,
+        [portalId, state, now]
+      );
+      return res.status(201).json({ id, name, state });
     } catch (err) {
-      if (err.code === "P2002") return res.status(409).json({ error: "Minister ID or state already exists" });
+      if (err.code === "ER_DUP_ENTRY") return res.status(409).json({ error: "Minister ID or state already exists" });
+      console.error(err);
       throw err;
     }
   }
@@ -49,30 +59,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "ids array is required" });
 
     try {
-      // Get states before deleting to lock portals
-      const ministers = await prisma.healthMinister.findMany({
-        where: { id: { in: ids } },
-        select: { state: true }
-      });
-
+      if (ids.length === 0) return res.json({ success: true, count: 0, message: "No matching ministers found." });
+      
+      const placeholders = ids.map(() => '?').join(',');
+      const [ministers] = await pool.execute(`SELECT state FROM HealthMinister WHERE id IN (${placeholders})`, ids);
+      
       if (ministers.length === 0) {
         return res.json({ success: true, count: 0, message: "No matching ministers found." });
       }
 
-      // Update all to inactive
-      await prisma.healthMinister.updateMany({
-        where: { id: { in: ids } },
-        data: { isActive: false }
-      });
+      await pool.execute(`UPDATE HealthMinister SET isActive = 0 WHERE id IN (${placeholders})`, ids);
 
-      // Lock all portals
       const states = ministers.map(m => m.state).filter(Boolean);
       if (states.length > 0) {
+        const statePlaceholders = states.map(() => '?').join(',');
+        const now = new Date();
         try {
-          await prisma.statePortal.updateMany({
-            where: { state: { in: states } },
-            data: { isUnlocked: false, lockedAt: new Date() }
-          });
+          await pool.execute(
+            `UPDATE StatePortal SET isUnlocked = 0, lockedAt = ?, updatedAt = ? WHERE state IN (${statePlaceholders})`,
+            [now, now, ...states]
+          );
         } catch (err) {
           console.log("[Backend] Bulk portal lock failed, skipping.");
         }
