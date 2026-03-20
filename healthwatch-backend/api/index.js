@@ -5,7 +5,7 @@ import cors from 'cors';
 import adminMinistersId from '../api_logic/admin/ministers/[id].js';
 import adminMinistersIndex from '../api_logic/admin/ministers/index.js';
 import alertsIndex from '../api_logic/alerts/index.js';
-import authLogin from '../api_logic/auth/login.js';
+import authLogin from '../api_logic/auth/login_v2.js';
 import authSignup from '../api_logic/auth/signup.js';
 import debug from '../api_logic/debug.js';
 import casesResolve from '../api_logic/cases/resolve.js';
