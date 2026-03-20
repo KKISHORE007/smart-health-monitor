@@ -1,0 +1,33 @@
+{
+  "success": true,
+  "alert": {
+    "id": "cmmx5tc9w000anpoobwmb4olq",
+    "disease": "Cholera",
+    "hospitalId": "H2-1773905965566",
+    "district": "V-DIST-1773905965566",
+    "area": null,
+    "state": "V-STATE-1773905965566",
+    "patientCount": 3,
+    "isActive": true,
+    "isResolved": false,
+    "createdAt": "2026-03-19T07:39:32.325Z",
+    "lastUpdated": "2026-03-19T07:39:32.325Z",
+    "entries": [
+      {
+        "id": "cmmx5tce2000bnpooncjdfvz7",
+        "alertId": "cmmx5tc9w000anpoobwmb4olq",
+        "symptomReportId": "cmmx5t9ro0002npoobcs9ilgo"
+      },
+      {
+        "id": "cmmx5tce2000cnpooyy9f7wl5",
+        "alertId": "cmmx5tc9w000anpoobwmb4olq",
+        "symptomReportId": "cmmx5tas90005npoo1g9jrcj9"
+      },
+      {
+        "id": "cmmx5tce2000dnpootivxd8qk",
+        "alertId": "cmmx5tc9w000anpoobwmb4olq",
+        "symptomReportId": "cmmx5tbv90008npoogtkzbgcm"
+      }
+    ]
+  }
+}

@@ -1,0 +1,200 @@
+// HealthWatch Database Schema
+// Provider: PostgreSQL (Vercel Postgres / Neon)
+// ORM: Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPER ADMIN (single system-level admin)
+// ─────────────────────────────────────────────────────────────────────────────
+model SuperAdmin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String   // bcrypt hashed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HEALTH MINISTERS (one per state, managed by Super Admin)
+// ─────────────────────────────────────────────────────────────────────────────
+model HealthMinister {
+  id        String   @id                  // e.g. "HM-TN-001"
+  name      String
+  title     String
+  state     String   @unique
+  password  String                        // bcrypt hashed
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  statePortal StatePortal?
+  hospitals   Hospital[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE PORTALS (lock / unlock signup per state)
+// ─────────────────────────────────────────────────────────────────────────────
+model StatePortal {
+  id         String   @id @default(cuid())
+  state      String   @unique
+  isUnlocked Boolean  @default(false)
+  unlockedAt DateTime?
+  lockedAt   DateTime?
+  updatedAt  DateTime @updatedAt
+
+  minister   HealthMinister @relation(fields: [state], references: [state])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOSPITALS (added by Health Ministers per state)
+// ─────────────────────────────────────────────────────────────────────────────
+model Hospital {
+  id          String   @id                // e.g. "HOSP-TN-001"
+  name        String
+  district    String
+  state       String
+  area        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  minister    HealthMinister @relation(fields: [state], references: [state])
+
+  users       User[]
+  symptoms    SymptomReport[]
+  alerts      OutbreakAlert[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// USERS (patients, doctors, helpers)
+// ─────────────────────────────────────────────────────────────────────────────
+model User {
+  id              String   @id @default(cuid())
+  name            String
+  email           String   @unique
+  phone           String?
+  password        String                  // bcrypt hashed
+  role            UserRole
+  state           String
+  district        String
+  area            String?
+
+  // Profile fields (patient-specific)
+  dob             DateTime?
+  gender          String?
+  bloodGroup      String?
+  familyMale      Int?     @default(0)
+  familyFemale    Int?     @default(0)
+  regularCondition String?
+  profileComplete Boolean  @default(false)
+  photo           String?                 // base64 or URL
+
+  hospitalId      String?
+  hospital        Hospital? @relation(fields: [hospitalId], references: [id])
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  symptoms        SymptomReport[]
+  resolvedCases   ResolvedCase[]
+}
+
+enum UserRole {
+  patient
+  doctor
+  helper
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SYMPTOM REPORTS (submitted by patients)
+// ─────────────────────────────────────────────────────────────────────────────
+model SymptomReport {
+  id              String   @id @default(cuid())
+  patientId       String
+  hospitalId      String
+  state           String
+  district        String
+  area            String?
+  symptoms        Json                    // array of symptom strings (JSON for MySQL)
+  detectedDisease String?                 // AI-detected disease
+  alertSent       Boolean  @default(false)
+  isResolved      Boolean  @default(false)
+  submittedAt     DateTime @default(now())
+
+  patient         User     @relation(fields: [patientId], references: [id])
+  hospital        Hospital @relation(fields: [hospitalId], references: [id])
+
+  outbreakAlerts  OutbreakAlertEntry[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OUTBREAK ALERTS (auto-generated when 3+ patients share disease in a district)
+// ─────────────────────────────────────────────────────────────────────────────
+model OutbreakAlert {
+  id           String   @id @default(cuid())
+  disease      String
+  hospitalId   String
+  district     String
+  area         String?
+  state        String
+  patientCount Int
+  isActive     Boolean  @default(true)
+  isResolved   Boolean  @default(false)
+  isViewedByAdmin Boolean @default(false)
+  createdAt    DateTime @default(now())
+  lastUpdated  DateTime @updatedAt
+
+  hospital     Hospital @relation(fields: [hospitalId], references: [id])
+  entries      OutbreakAlertEntry[]
+}
+
+// Junction: which symptom reports contributed to an alert
+model OutbreakAlertEntry {
+  id             String        @id @default(cuid())
+  alertId        String
+  symptomReportId String
+
+  alert          OutbreakAlert  @relation(fields: [alertId], references: [id])
+  symptomReport  SymptomReport  @relation(fields: [symptomReportId], references: [id])
+
+  @@unique([alertId, symptomReportId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESOLVED CASES (doctor marks a case resolved)
+// ─────────────────────────────────────────────────────────────────────────────
+model ResolvedCase {
+  id         String   @id @default(cuid())
+  caseId     String   @unique            // symptomReport id
+  resolvedBy String                      // doctor user id
+  resolvedAt DateTime @default(now())
+  notes      String?
+
+  doctor     User     @relation(fields: [resolvedBy], references: [id])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUDIT LOG (optional but recommended for a health system)
+// ─────────────────────────────────────────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?                      // userId or "superadmin"
+  actorRole String?
+  action    String                       // e.g. "LOGIN", "ADD_HOSPITAL", "UNLOCK_PORTAL"
+  target    String?                      // e.g. hospitalId, alertId
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
