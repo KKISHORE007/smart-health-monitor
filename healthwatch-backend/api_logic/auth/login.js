@@ -10,27 +10,28 @@ async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  const { role, id, password, email } = req.body || {};
+  const { role: loginRole, id, password, email } = req.body || {};
+  const normalizedRole = loginRole ? loginRole.toLowerCase() : "";
 
   try {
     // ── Super Admin ──────────────────────────────────────────
-    if (role === "superadmin") {
+    if (normalizedRole === "superadmin") {
       const admin = await prisma.superAdmin.findFirst();
       if (!admin || !(await bcrypt.compare(password, admin.password)))
         return res.status(401).json({ error: "Invalid credentials" });
-      const token = signToken({ id: admin.id, role: "superadmin" });
-      return res.json({ token, role: "superadmin" });
+      const token = signToken({ id: admin.id, role: "SUPERADMIN" });
+      return res.json({ token, role: "SUPERADMIN" });
     }
 
     // ── Health Minister ───────────────────────────────────────
     const trimmedId = id ? id.trim() : "";
-    if (role === "minister") {
+    if (normalizedRole === "minister") {
       const minister = await prisma.healthMinister.findFirst({ where: { id: trimmedId } });
       if (!minister || !minister.isActive || !(await bcrypt.compare(password, minister.password))) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      const token = signToken({ id: minister.id, role: "minister", state: minister.state, name: minister.name, title: minister.title });
-      return res.json({ token, role: "minister", minister: { id: minister.id, name: minister.name, title: minister.title, state: minister.state } });
+      const token = signToken({ id: minister.id, role: "MINISTER", state: minister.state, name: minister.name, title: minister.title });
+      return res.json({ token, role: "MINISTER", minister: { id: minister.id, name: minister.name, title: minister.title, state: minister.state } });
     }
 
     // ── Patient / Doctor / Helper ─────────────────────────────
