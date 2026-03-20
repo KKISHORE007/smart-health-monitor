@@ -312,7 +312,7 @@ const SUPER_ADMIN_PASS = "india@healthwatch";
 const SLIDESHOW_IMAGES = [
   {
     caption: "Modern Hospital Facility",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#1e3a5f"/>
       <rect x="200" y="150" width="800" height="450" rx="8" fill="#1a3050" stroke="#93c5fd" stroke-width="2"/>
       <rect x="520" y="150" width="160" height="80" fill="#1a3050" stroke="#93c5fd" stroke-width="2"/>
@@ -337,7 +337,7 @@ const SLIDESHOW_IMAGES = [
   },
   {
     caption: "Doctors Collaborating on Patient Care",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#0f2d18"/>
       <circle cx="380" cy="260" r="70" fill="#1a3050" stroke="#14b8a6" stroke-width="2"/>
       <circle cx="380" cy="220" r="30" fill="#93c5fd"/>
@@ -360,7 +360,7 @@ const SLIDESHOW_IMAGES = [
   },
   {
     caption: "Medical Emergency Response Team",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#0d1525"/>
       <rect x="150" y="200" width="900" height="360" rx="12" fill="#1e3a5f" stroke="#ef4444" stroke-width="2"/>
       <rect x="150" y="200" width="900" height="60" rx="12" fill="#1a0a0a"/>
@@ -392,7 +392,7 @@ const SLIDESHOW_IMAGES = [
   },
   {
     caption: "Disease Outbreak Surveillance",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#1e3a5f"/>
       <rect x="100" y="120" width="1000" height="480" rx="16" fill="#1e3a5f" stroke="#14b8a6" stroke-width="1.5"/>
       <text x="600" y="170" font-family="Arial" font-size="16" fill="#14b8a6" text-anchor="middle" letter-spacing="3">INDIA DISEASE SURVEILLANCE MAP</text>
@@ -425,7 +425,7 @@ const SLIDESHOW_IMAGES = [
   },
   {
     caption: "Community Health Workers in Action",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#0d1525"/>
       <rect x="0" y="480" width="1200" height="220" fill="#0d1117"/>
       <rect x="60" y="300" width="180" height="280" rx="8" fill="#1a3050" stroke="#93c5fd" stroke-width="1.5"/>
@@ -450,7 +450,7 @@ const SLIDESHOW_IMAGES = [
   },
   {
     caption: "Water Quality Testing — Rural India",
-    svg: `<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+    svg: `<svg viewBox="0 0 1200 700" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <rect width="1200" height="700" fill="#1e3a5f"/>
       <ellipse cx="600" cy="560" rx="500" ry="80" fill="#163048" opacity="0.8"/>
       <path d="M300 400 Q450 200 600 380 Q750 200 900 400 Q1050 580 600 600 Q150 580 300 400Z" fill="#0a2540" stroke="#0e4d7a" stroke-width="2" opacity="0.6"/>
@@ -955,8 +955,8 @@ function LandingPage({ statePortals, onHMAdmin, onSuperAdmin, onLogin, onSignup 
             className="slide-svg-wrap"
             style={{
               position:"absolute",inset:0,
-              transform: i === slide ? "scale(1.06) translateX(2%)" : "scale(1.08) translateX(-3%)",
-              transition:"transform 3s ease",
+              transform: i === slide ? "scale(1.05)" : "scale(1)",
+              transition:"transform 4s ease-out",
               filter:"blur(4px) brightness(0.6) saturate(0.75)",
               opacity: 0.85,
             }}
