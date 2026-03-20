@@ -16,7 +16,7 @@ async function handler(req, res) {
     });
     
     // Return as map { state: boolean }
-    const map = {};
+    const map = { _v: "deploy_check_2026_03_20_v3" };
     activeMinisters.forEach(m => {
       map[m.state] = m.statePortal ? m.statePortal.isUnlocked : false;
     });
